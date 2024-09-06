@@ -1,11 +1,14 @@
 import React from 'react';
 import './index.css'; // Ensure this CSS file is imported
 import sunImage from './assets/waves.webp'; // Import the image
+import Header from './components/Header';
 
 function App() {
   return (
+    
     <div className="min-h-screen flex flex-col items-center justify-between bg-gradient-to-br from-blue-500 to-gray-300">
       {/* Header Section */}
+      <Header />
       <header className="text-white text-center py-10">
         <h1 className="text-5xl font-extrabold mb-4">
           Creative Web Design Solutions
