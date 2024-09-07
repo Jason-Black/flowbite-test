@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'flowbite-react';
 import { motion } from 'framer-motion';
-import { HiOutlineMail, HiPhone, HiUser } from 'react-icons/hi';
+import { HiOutlineMail, HiPhone, HiUser, HiOutlineClock, HiOutlineLocationMarker } from 'react-icons/hi';
 import contactImage from '../assets/logo-home.png';
 
 function ResponsiveModal() {
@@ -14,29 +14,34 @@ function ResponsiveModal() {
     } else if (window.innerWidth >= 1024) {
       setModalSize('6xl');
     } else if (window.innerWidth >= 768) {
-      setModalSize('md');
+      setModalSize('xl');
     } else {
-      setModalSize('sm');
+      setModalSize('md');
     }
   };
 
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const openAndResizeModal = () => {
+    handleResize();
+    setOpenModal(true);
+  };
+
+  // Animation Variants
   const iconVariants = {
-    hidden: {
-      opacity: 0,
-      x: 100,       // Start from right
-             // Slight downward movement
-      rotate: -190,   // Start with rotation
-    },
+    hidden: { opacity: 0, x: 100, rotate: -180 },
     visible: {
       opacity: 1,
       x: 0,
-             // Move up to normal position
-      rotate: 0,    // Remove rotation
+      rotate: 0,
       transition: {
         type: 'spring',
         stiffness: 400,
         damping: 20,
-        duration: 0.2, // Very quick and sharp
+        duration: 0.3,
       },
     },
   };
@@ -44,119 +49,186 @@ function ResponsiveModal() {
   const containerVariants = {
     visible: {
       transition: {
-        staggerChildren: .2, // Stagger between each child
+        staggerChildren: 0.15,
       },
     },
   };
 
-  const openAndResizeModal = () => {
-    handleResize();
-    setOpenModal(true);
+  const contactInfoVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+        duration: 0.4,
+      },
+    },
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.08,
+        type: 'spring',
+        stiffness: 150,
+        damping: 15,
+      },
+    }),
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { type: 'spring', stiffness: 150, damping: 20, delay: 0.3 },
+    },
   };
 
   return (
     <>
-      {/* Button to open the modal */}
       <Button onClick={openAndResizeModal} color="purple">
         Open Responsive Modal
       </Button>
 
-      {/* The actual modal */}
-      <Modal dismissible show={openModal} size={modalSize} onClose={() => setOpenModal(false)}>
-        <Modal.Header>
-          <div className="flex justify-center space-x-4">
+      <Modal
+        show={openModal}
+        size={modalSize}
+        onClose={() => setOpenModal(false)}
+        className="dark"
+      >
+        <Modal.Header className="bg-gray-800 text-white">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="flex justify-center space-x-4"
+          >
+            <motion.div variants={iconVariants}>
+              <HiUser className="text-4xl text-blue-500" />
+            </motion.div>
+            <motion.div variants={iconVariants}>
+              <HiOutlineMail className="text-4xl text-pink-500" />
+            </motion.div>
+            <motion.div variants={iconVariants}>
+              <HiPhone className="text-4xl text-green-500" />
+            </motion.div>
+          </motion.div>
+        </Modal.Header>
+
+        <Modal.Body className="bg-gray-900">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white p-6">
+            {/* Left Side: Contact Info */}
             <motion.div
               initial="hidden"
               animate="visible"
-              variants={containerVariants}
-              className="flex space-x-4"
+              variants={containerVariants} // Apply stagger to contact info
+              className="flex flex-col items-start justify-start text-white md:p-10 "
             >
-              <motion.div variants={iconVariants}>
-                <HiUser className="text-4xl text-blue-500" />
-              </motion.div>
-              <motion.div variants={iconVariants}>
-                <HiOutlineMail className="text-4xl text-pink-500" />
-              </motion.div>
-              <motion.div variants={iconVariants}>
-                <HiPhone className="text-4xl text-green-500" />
+              <motion.p
+                variants={contactInfoVariants}
+                className="text-4xl font-semibold md:mb-10 mb-6 "
+              >
+                Reach out to us directly!
+              </motion.p>
+
+              {/* Contact Information Block */}
+              <motion.div variants={contactInfoVariants} className="w-full space-y-6">
+                <div className="space-y-2">
+                  <motion.p
+                    variants={contactInfoVariants}
+                    className="flex items-center text-lg md:text-xl lg:text-2xl space-x-2"
+                  >
+                    <HiPhone className="w-8 pr-2 h-8 md:w-12 md:h-12 text-yellow-400" />
+                    <span>(123) 456-7890</span>
+                  </motion.p>
+                  <motion.p
+                    variants={contactInfoVariants}
+                    className="flex items-center text-lg md:text-xl lg:text-2xl space-x-2"
+                  >
+                    <HiOutlineMail className="w-8 pr-2 h-8 md:w-12 md:h-12 text-yellow-400" />
+                    <span>email@example.com</span>
+                  </motion.p>
+                  <motion.p
+                    variants={contactInfoVariants}
+                    className="flex items-center text-lg md:text-xl lg:text-2xl space-x-2"
+                  >
+                    <HiOutlineMail className="w-8 pr-2 h-8 md:w-12 md:h-12 text-yellow-400" />
+                    <span>support@example.com</span>
+                  </motion.p>
+                  <motion.p
+                    variants={contactInfoVariants}
+                    className="flex items-center text-lg md:text-xl lg:text-2xl space-x-2"
+                  >
+                    <HiOutlineClock className="w-8 pr-2 h-8 md:w-12 md:h-12 text-yellow-400" />
+                    <span>Office Hours: Mon-Fri, 9 AM - 5 PM</span>
+                  </motion.p>
+                  <motion.p
+                    variants={contactInfoVariants}
+                    className="flex items-center text-lg md:text-xl lg:text-2xl space-x-2"
+                  >
+                    <HiOutlineLocationMarker className="w-8 pr-2 h-8 md:w-12 md:h-12 text-yellow-400" />
+                    <span>1234 Address St., City, Country</span>
+                  </motion.p>
+                </div>
               </motion.div>
             </motion.div>
-          </div>
-        </Modal.Header>
-        
-        <Modal.Body>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col items-center justify-center">
-              <img src={contactImage} alt="Contact" className="rounded-lg shadow-lg w-3/4" />
-              <p className="mt-6 text-gray-600 text-center">
-                Let's get in touch! We're here to assist you with any queries or projects you have in mind.
-              </p>
-            </div>
 
-              {/* Right side with form */}
-              <form
-              action="https://getform.io/f/avrednla"
-              method="POST"
-              className="space-y-4"
-              encType="multipart/form-data"
-            >
-              <div className="grid grid-cols-1 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Phone</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Subject</label>
-                <input
-                  type="text"
-                  name="subject"
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Message</label>
-                <textarea
-                  name="message"
-                  rows="4"
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                ></textarea>
-              </div>
-
-              <button
+            {/* Right Side: Form */}
+            <div className="space-y-4 w-full">
+              {[{ label: 'Name', type: 'text', name: 'name' }, { label: 'Phone', type: 'text', name: 'phone' }, { label: 'Email', type: 'email', name: 'email' }, { label: 'Subject', type: 'text', name: 'subject' }, { label: 'Message', type: 'textarea', name: 'message' }].map(
+                (input, i) => (
+                  <motion.div
+                    key={i}
+                    custom={i}
+                    variants={formVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <label className="block text-sm font-medium text-white">{input.label}</label>
+                    {input.type !== 'textarea' ? (
+                      <input
+                        type={input.type}
+                        name={input.name}
+                        className="mt-1 block w-full md:w-3/4 p-2 border border-gray-300 rounded-lg bg-sky-300 text-gray-800 focus:ring-yellow-600 focus:border-yellow-600"
+                      />
+                    ) : (
+                      <textarea
+                        name={input.name}
+                        rows="4"
+                        className="mt-1 block w-full md:w-3/4 p-2 border border-gray-300 rounded-lg bg-blue-gray-500 text-gray-800 focus:ring-yellow-600 focus:border-yellow-600"
+                      ></textarea>
+                    )}
+                  </motion.div>
+                )
+              )}
+              <motion.button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+                className="w-full md:w-1/4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-1 px-2 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Send Message
-              </button>
-            </form>
+              </motion.button>
+
+              {/* Image centers under the button on smaller screens */}
+              <motion.img
+                src={contactImage}
+                alt="Contact"
+                className="w-1/2 md:w-1/6 mx-auto md:absolute md:top-0 md:right-0 rounded-lg shadow-lg mt-4"
+                variants={imageVariants}
+              />
+            </div>
           </div>
         </Modal.Body>
-        
-        <Modal.Footer>
+
+        <Modal.Footer className="bg-gray-800">
           <Button onClick={() => setOpenModal(false)}>Close</Button>
         </Modal.Footer>
       </Modal>
