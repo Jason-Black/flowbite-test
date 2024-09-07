@@ -11,7 +11,7 @@ const Header = () => {
         <Button>Click Me</Button>
         <Button outline gradientDuoTone="purpleToBlue">
         Purple to Blue
-      </Button>
+      </Button><Checkbox />
       </div>
     </div>
   )
