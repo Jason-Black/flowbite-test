@@ -17,7 +17,20 @@
     }
 }
 
-
+.video-bg {
+    opacity: 0;
+    animation: fadeInVideo 2s ease forwards;
+    animation-delay: 1s; /* Add delay before the fade-in */
+  }
+  
+  @keyframes fadeInVideo {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
 @layer components {
     .container {
